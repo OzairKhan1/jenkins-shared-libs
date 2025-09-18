@@ -13,7 +13,7 @@ def call(String gitUrl, String branch, String credentialsId = null, String commi
     """
 
     sh """
-        git checkout -b ${branch}
+        git branch -M ${branch}
         git add .
         git diff --cached --quiet || git commit -m "${commitMessage}" || echo "No changes to commit"
     """
