@@ -12,22 +12,25 @@ def call(String gitUrl, String branch, String credentialsId = null, String commi
         fi
     """
 
-    sh """
-        git branch -M ${branch}
-        git pull origin ${branch} --rebase
-        git add .
-        git diff --cached --quiet || git commit -m "${commitMessage}" || echo "No changes to commit"
-    """
-
     if (credentialsId) {
         withCredentials([usernamePassword(credentialsId: credentialsId,
                                           usernameVariable: 'GIT_USERNAME',
                                           passwordVariable: 'GIT_PASSWORD')]) {
             sh """
+                git branch -M ${branch}
+                git pull https://${GIT_USERNAME}:${GIT_PASSWORD}@${gitUrl.replaceFirst(/^https?:\\/\\//, '')} ${branch} --rebase || true
+                git add .
+                git diff --cached --quiet || git commit -m "${commitMessage}" || echo "No changes to commit"
                 git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${gitUrl.replaceFirst(/^https?:\\/\\//, '')} ${branch}
             """
         }
     } else {
-        sh "git push origin ${branch}"
+        sh """
+            git branch -M ${branch}
+            git pull origin ${branch} --rebase || true
+            git add .
+            git diff --cached --quiet || git commit -m "${commitMessage}" || echo "No changes to commit"
+            git push origin ${branch}
+        """
     }
 }
