@@ -2,8 +2,8 @@ def call(String gitUrl, String branch, String credentialsId = null, String commi
     echo "Pushing to ${gitUrl} on branch ${branch}..."
 
     sh """
-        git config user.email "OzairKhan1"
-        git config user.name "ozairk048@gmail.com"
+        git config user.email "ozairk048@gmail.com"
+        git config user.name "OzairKhan1"
         # Ensure remote is set
         if ! git remote | grep -q origin; then
             git remote add origin ${gitUrl}
