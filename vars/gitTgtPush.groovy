@@ -31,20 +31,20 @@ def call(String gitUrl, String branch, String credentialsId = null, String commi
                                           usernameVariable: 'GIT_USERNAME',
                                           passwordVariable: 'GIT_PASSWORD')]) {
             sh """
-                git fetch ${remoteName} ${branch} || true
-                git checkout -B ${branch} ${remoteName}/${branch} || git checkout -B ${branch}
-                git add .
-                git diff --cached --quiet || git commit -m "${commitMessage}" || echo "No changes to commit"
-                git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${gitUrl.replaceFirst(/^https?:\\/\\//, '')} ${branch}
+                 git branch -M ${branch}
+                 git pull https://${GIT_USERNAME}:${GIT_PASSWORD}@${gitUrl.replaceFirst(/^https?:\\/\\//, '')} ${branch} --rebase || true
+                 git add .
+                 git diff --cached --quiet || git commit -m "${commitMessage}" || echo "No changes to commit"
+                 git push https://${GIT_USERNAME}:${GIT_PASSWORD}@${gitUrl.replaceFirst(/^https?:\\/\\//, '')} ${branch}
             """
         }
     } else {
         sh """
-            git fetch ${remoteName} ${branch} || true
-            git checkout -B ${branch} ${remoteName}/${branch} || git checkout -B ${branch}
+            git branch -M ${branch}
+            git pull origin ${branch} --rebase || true
             git add .
             git diff --cached --quiet || git commit -m "${commitMessage}" || echo "No changes to commit"
-            git push ${remoteName} ${branch}
+            git push origin ${branch}
         """
     }
 }
