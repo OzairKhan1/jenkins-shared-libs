@@ -33,6 +33,8 @@ def call(String gitUrl, String branch, String credentialsId = null, String commi
 sh """
         git branch -M ${branch}
         git pull origin ${branch} --no-edit || true
+        git add .
+        git commit -m ${commitMessage}
         # Create a split branch
         git subtree split --prefix=Kubernetes -b k8s-only
         # Create a temp folder wrapper
@@ -46,8 +48,10 @@ sh """
         }
     } else {
 sh """
-             git branch -M ${branch}
+        git branch -M ${branch}
         git pull origin ${branch} --no-edit || true
+         git add .
+        git commit -m ${commitMessage}
         # Create a split branch
         git subtree split --prefix=Kubernetes -b k8s-only
         # Create a temp folder wrapper
