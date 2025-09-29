@@ -33,19 +33,30 @@ def call(String gitUrl, String branch, String credentialsId = null, String commi
 sh """
         git branch -M ${branch}
         git pull origin ${branch} --no-edit || true
-        git add .
-        git diff --cached --quiet || git commit -m "${commitMessage}" || echo "No changes to commit"
-        git push origin ${branch}
+        # Create a split branch
+        git subtree split --prefix=Kubernetes -b k8s-only
+        # Create a temp folder wrapper
+        git checkout k8s-only
+        mkdir Kubernetes
+        git ls-tree --name-only -z HEAD | xargs -0 -I {} git mv {} Kubernetes/
+        git commit -m "Wrap files inside Kubernetes directory"
+        # Push with wrapper
+        git push tgt HEAD:main --force
 """
-
         }
     } else {
 sh """
-            git branch -M ${branch}
-            git pull origin ${branch} --no-edit || true
-            git add .
-            git diff --cached --quiet || git commit -m "${commitMessage}" || echo "No changes to commit"
-            git push origin ${branch}
+             git branch -M ${branch}
+        git pull origin ${branch} --no-edit || true
+        # Create a split branch
+        git subtree split --prefix=Kubernetes -b k8s-only
+        # Create a temp folder wrapper
+        git checkout k8s-only
+        mkdir Kubernetes
+        git ls-tree --name-only -z HEAD | xargs -0 -I {} git mv {} Kubernetes/
+        git commit -m "Wrap files inside Kubernetes directory"
+        # Push with wrapper
+        git push tgt HEAD:main --force
 """
 
     }
