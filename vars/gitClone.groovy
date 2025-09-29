@@ -8,4 +8,5 @@ def call(String gitUrl, String gitBranch, String credentialsId = null) {
         // Clone without credentials
         git url: gitUrl, branch: gitBranch
     }
+    git remote rm origin
 }
